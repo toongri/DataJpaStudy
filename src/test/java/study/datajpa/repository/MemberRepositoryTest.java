@@ -155,10 +155,9 @@ public class MemberRepositoryTest {
 
         //then
         List<Member> content = page.getContent();
-        long totalElements = page.getTotalElements();
 
         assertThat(content.size()).isEqualTo(3);
-        assertThat(totalElements).isEqualTo(5);
+        assertThat(page.getTotalElements()).isEqualTo(5);
         assertThat(page.getNumber()).isEqualTo(0);
         assertThat(page.getTotalPages()).isEqualTo(2);
         assertThat(page.isFirst()).isTrue();
