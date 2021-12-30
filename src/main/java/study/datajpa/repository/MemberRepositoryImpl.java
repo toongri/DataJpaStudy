@@ -1,4 +1,7 @@
 package study.datajpa.repository;
 
-public class MemberRepositoryImpl implements MemberRepository{
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+public class MemberRepositoryImpl implements MemberRepositoryCustom{
 }
