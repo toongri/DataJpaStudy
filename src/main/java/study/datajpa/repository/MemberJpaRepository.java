@@ -1,22 +1,39 @@
 package study.datajpa.repository;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import study.datajpa.entity.Member;
+import study.datajpa.entity.QMember;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Optional;
 
+import static study.datajpa.entity.QMember.*;
+
 @Repository
+@RequiredArgsConstructor
 public class MemberJpaRepository {
 
-    @PersistenceContext
-    private EntityManager em;
+    private final EntityManager em;
+    private final JPAQueryFactory jpaQueryFactory;
 
     public Member save(Member member) {
         em.persist(member);
         return member;
+    }
+
+    public List<Member> test() {
+        List<Member> members = jpaQueryFactory
+                .select(member)
+                .from(member)
+                .fetch();
+
+        return members;
     }
 
     public void delete(Member member) {
