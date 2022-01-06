@@ -88,4 +88,17 @@ public class MemberJpaRepository {
                 .executeUpdate();
         return resultCount;
     }
+
+
+    public List<Member> findAll_Querydsl() {
+        return jpaQueryFactory
+                .selectFrom(member).fetch();
+    }
+
+    public List<Member> findByUsername_Querydsl(String username) {
+        return jpaQueryFactory
+                .selectFrom(member)
+                .where(member.username.eq(username))
+                .fetch();
+    }
 }
