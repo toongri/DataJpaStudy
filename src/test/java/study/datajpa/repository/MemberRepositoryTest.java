@@ -10,6 +10,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import study.datajpa.dto.MemberDto;
+import study.datajpa.dto.MemberSearchCondition;
+import study.datajpa.dto.MemberTeamDto;
 import study.datajpa.entity.Member;
 import study.datajpa.entity.Team;
 
@@ -110,21 +112,6 @@ public class MemberRepositoryTest {
         }
     }
 
-    @Test
-    public void findMemberDto() {
-
-        Team team = new Team("teamA");
-        teamRepository.save(team);
-
-        Member m1 = new Member("AAA", 10);
-        m1.changeTeam(team);
-        memberRepository.save(m1);
-
-        List<MemberDto> memberDto = memberRepository.findMemberDto();
-        for (MemberDto dto : memberDto) {
-            System.out.println(dto);
-        }
-    }
 
     @Test
     public void findByNames() {
@@ -214,5 +201,32 @@ public class MemberRepositoryTest {
         Member member = memberRepository.findReadOnlyByUsername("member1");
         member.setUsername("member2");
         em.flush(); //Update Query 실행X
+    }
+
+    @Test
+    public void searchPageSimple() {
+        Team teamA = new Team("teamA");
+        Team teamB = new Team("teamB");
+        em.persist(teamA);
+        em.persist(teamB);
+
+        Member member1 = new Member("member1", 10, teamA);
+        Member member2 = new Member("member2", 20, teamA);
+        Member member3 = new Member("member3", 30, teamB);
+        Member member4 = new Member("member4", 40, teamB);
+        em.persist(member1);
+        em.persist(member2);
+        em.persist(member3);
+        em.persist(member4);
+
+        var condition = new MemberSearchCondition();
+        PageRequest pageRequest = PageRequest.of(1, 1);
+        condition.setAgeLoe(40);
+        condition.setTeamName("teamA");
+
+        Page<MemberTeamDto> result = memberRepository.searchPageSimple(condition, pageRequest);
+
+        assertThat(result.getSize()).isEqualTo(1);
+        assertThat(result.getContent()).extracting("username").containsExactly("member2");
     }
 }

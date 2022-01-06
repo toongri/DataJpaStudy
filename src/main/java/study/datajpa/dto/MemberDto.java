@@ -3,6 +3,7 @@ package study.datajpa.dto;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
 import study.datajpa.entity.Member;
+import study.datajpa.entity.Team;
 
 @Data
 public class MemberDto {

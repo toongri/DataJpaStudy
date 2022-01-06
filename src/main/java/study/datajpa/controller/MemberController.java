@@ -7,10 +7,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import study.datajpa.dto.MemberDto;
+import study.datajpa.dto.MemberSearchCondition;
+import study.datajpa.dto.MemberTeamDto;
 import study.datajpa.entity.Member;
+import study.datajpa.repository.MemberJpaRepository;
 import study.datajpa.repository.MemberRepository;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,27 +22,16 @@ public class MemberController {
 
     private final MemberRepository memberRepository;
 
-    @GetMapping("/members/{id}")
-    public String findMember(@PathVariable("id") Long id) {
-        Member member = memberRepository.findById(id).get();
-        return member.getUsername();
+    @GetMapping("/v1/members")
+    public List<MemberTeamDto> searchMemberV1(MemberSearchCondition condition) {
+        return memberRepository.search(condition);
     }
-
-    @GetMapping("/members2/{id}")
-    public String findMember2(@PathVariable("id") Member member) {
-        return member.getUsername();
+    @GetMapping("/v2/members")
+    public Page<MemberTeamDto> searchMemberV2(MemberSearchCondition condition, Pageable pageable) {
+        return memberRepository.searchPageSimple(condition, pageable);
     }
-
-    @GetMapping("/members")
-    public Page<MemberDto> list(Pageable pageable) {
-        return memberRepository.findAll(pageable)
-                .map(MemberDto::new);
-    }
-
-//    @PostConstruct
-    public void init() {
-        for (int i = 0; i < 100; i++) {
-            memberRepository.save(new Member("user" + i, i));
-        }
+    @GetMapping("/v3/members")
+    public Page<MemberTeamDto> searchMemberV3(MemberSearchCondition condition, Pageable pageable) {
+        return memberRepository.searchPageComplex(condition, pageable);
     }
 }
